@@ -11,6 +11,7 @@ passport.use('signup', new localStrategy({
         // Create the user account
         const user = await UserModel.create({ email, password });
         // Send the user's info on to the next middleware function
+        // The first argument is where an error would go. Since there isn't one, we're putting null.
         return done(null, user);
     }
     catch(error) {
@@ -33,6 +34,8 @@ passport.use('login', new localStrategy({
         // 
         const validate = await user.isValidPassword(password);
         if( !validate ){
+            // Return an error message if the password doesn't match the stored hash
+            // TODO: You probably shouldn't tell the user specifically that the password was what they got wrong.
             return done(null, false, { message: 'Incorrect password.' });
         }
         // All good, send the user information to the next middleware function
